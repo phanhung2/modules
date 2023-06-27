@@ -2907,6 +2907,10 @@ raxmlng:
   - modules/nf-core/raxmlng/**
   - tests/modules/nf-core/raxmlng/**
 
+read2tree:
+  - modules/nf-core/read2tree/**
+  - tests/modules/nf-core/read2tree/**
+
 rgi/main:
   - modules/nf-core/rgi/main/**
   - tests/modules/nf-core/rgi/main/**
