@@ -1,0 +1,8 @@
+- name: read2tree test_read2tree
+  command: nextflow run ./tests/modules/nf-core/read2tree -entry test_read2tree -c ./tests/config/nextflow.config -c ./tests/modules/nf-core/read2tree/nextflow.config
+  tags:
+    - read2tree
+  files:
+    - path: output/read2tree/test/test.txt
+      md5sum: 7e1db7d7b9f7c02085d2b56c2bb69cd8
+    - path: output/read2tree/versions.yml
