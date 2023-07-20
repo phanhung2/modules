@@ -10,7 +10,7 @@ process READ2TREE {
     input:
     tuple val(meta),  path(fastq1, stageAs: 'read1_??.fa')
     tuple val(meta2), path(fastq2, stageAs: 'read2_??.fa')
-    tuple val(meta3), path(markers)
+    tuple val(meta3), path(markers) // directory with marker database
 
     output:
     tuple val(meta), path("${prefix}_read2tree"), emit: out
@@ -23,12 +23,28 @@ process READ2TREE {
     def args = task.ext.args ?: ''
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    read2tree \\
-        --${args} \\
-        --tree \\
-        --reads ${fastq1} ${fastq2} \\
-        --standlone_path ${markers} \\
-        --output_path ${prefix}_read2tree
+    # this creates just the reference folder
+    read2tree --standalone_path ${markers}/ --output_path ${prefix}_read2tree --reference  
+    
+    # Add each sample
+    for R1 in ${fastq1}; do
+        R2=\$(echo \$R1 | sed 's/^read1_/read2_/')
+        read2tree \\
+        --standalone_path ${markers}/ \\
+        --output_path ${prefix}_read2tree \\
+        --reads \$R1 \$R2
+    done
+    
+    # Build tree          
+    read2tree --standalone_path ${markers}/ --output_path ${prefix}_read2tree --merge_all_mappings --tree
+    
+    //read2tree \\
+    //    --${args} \\
+    //    --tree \\
+    //    --reads ${fastq1} ${fastq2} \\
+    //    --standlone_path ${markers} \\
+    //    --output_path ${prefix}_read2tree
+
     
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
